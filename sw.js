@@ -1,6 +1,6 @@
-// Care Journal offline support: serve the app shell from cache when there's no signal.
+// Health Vault offline support: serve the app shell from cache when there's no signal.
 // Bump VERSION whenever you deploy a new index.html so phones pick it up.
-const VERSION = 'cj-v1';
+const VERSION = 'cj-v3';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
