@@ -1,6 +1,6 @@
 {
-  "name": "Care Journal",
-  "short_name": "Care Journal",
+  "name": "Health Vault",
+  "short_name": "Health Vault",
   "description": "One place for every appointment, medication and result.",
   "start_url": "./",
   "scope": "./",
