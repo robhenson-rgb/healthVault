@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Care Journal</title>
+<title>Health Vault</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#4a2c6b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Care Journal">
+<meta name="apple-mobile-web-app-title" content="Health Vault">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -77,7 +77,7 @@ ol.how{padding-left:20px;margin:6px 0}
 </style>
 </head>
 <body>
-<header class="top"><small>Care Journal</small><h1 id="who">Care Journal</h1><div class="sub" id="whosub"></div></header>
+<header class="top"><small>Health Vault</small><h1 id="who">Health Vault</h1><div class="sub" id="whosub"></div></header>
 <main id="app"></main>
 <nav id="nav" aria-label="Sections"></nav>
 <div id="layer"></div>
@@ -112,7 +112,7 @@ function toast(m){const t=document.createElement('div');t.className='toast';t.te
 const ICON={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',visits:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7M9 8h3"/>',meds:'<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)"/><path d="M9.5 8.5l5 7"/>',appts:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',more:'<path d="M4 6h16M4 12h16M4 18h16"/>'};
 const TABS=[['home','Today'],['visits','Visits'],['meds','Meds'],['appts','Appts'],['more','Share']];
 function navR(){$('#nav').innerHTML=S?TABS.map(([k,l])=>`<button data-act="tab" data-k="${k}" ${tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>${l}</button>`).join(''):''}
-function head(){const n=S&&S.patient.name;$('#who').textContent=n?n+'’s health record':'Care Journal';
+function head(){const n=S&&S.patient.name;$('#who').textContent=n?n+'’s Care Journal':'Health Vault';
  let sub='';if(S){if(S.patient.born){const a=Math.floor(days(S.patient.born)/365.25);sub='Age '+a+' · '}sub+=S.visits.length+' visits logged · '+activeMeds().length+' current meds'}$('#whosub').textContent=sub}
 const activeMeds=()=>S.meds.filter(m=>m.status==='active');
 const medsUpdated=()=>S.meds.reduce((a,m)=>[m.start,m.stop,m.u].filter(Boolean).reduce((x,y)=>y>x?y:x,a),'');
@@ -140,7 +140,7 @@ function vMeds(){const a=activeMeds(),s=S.meds.filter(m=>m.status==='stopped').s
  return banners()+`<div class="btns one"><button class="btn p" data-act="add-med">+ Add a medication</button></div><h2>Taking now <span>${a.length}</span></h2>${a.length?a.map(medCard).join(''):'<div class="empty">None listed.</div>'}${s.length?`<details><summary>Stopped (${s.length})</summary>${s.map(medCard).join('')}</details>`:''}`}
 function apptCard(a,past){return`<div class="card"><div class="row"><div class="lbl">${esc(a.specialty)}</div><div class="meta">${esc(fmt(a.date))}${a.time?' · '+fmtTime(a.time):''}</div></div>${a.doctor?`<div class="meta">${esc(a.doctor)}${a.where?' · '+esc(a.where):''}</div>`:''}${a.bring?`<div class="fu"><b>Bring:</b> ${esc(a.bring)}</div>`:''}<div class="acts">${past?`<button class="btn mini p" data-act="log-appt" data-id="${a.id}">Log this visit</button>`:''}<button class="btn mini" data-act="edit-appt" data-id="${a.id}">Edit</button></div></div>`}
 function vAppts(){const u=upcoming(),p=pastUnlogged();return banners()+`<div class="btns one"><button class="btn p" data-act="add-appt">+ Add an appointment</button></div><h2>Coming up <span>${u.length}</span></h2>${u.length?u.map(a=>apptCard(a,false)).join(''):'<div class="empty">Nothing scheduled.</div>'}${p.length?`<h2>Needs notes <span>${p.length}</span></h2>${p.map(a=>apptCard(a,true)).join('')}`:''}`}
-function summaryText(){const L=[],P=S.patient;L.push('HEALTH SUMMARY'+(P.name?' — '+P.name:''));if(P.born)L.push('Born '+fmt(P.born));L.push('Prepared '+fmt(today())+' from her care journal','');
+function summaryText(){const L=[],P=S.patient;L.push('HEALTH SUMMARY'+(P.name?' — '+P.name:''));if(P.born)L.push('Born '+fmt(P.born));L.push('Prepared '+fmt(today())+' from their Care Journal','');
  L.push('CURRENT MEDICATIONS (updated '+ago(medsUpdated())+')');activeMeds().forEach(m=>L.push('• '+m.name+(m.dose?' — '+m.dose:'')+(m.by?' ('+m.by+')':'')));if(!activeMeds().length)L.push('• None');
  const st=S.meds.filter(m=>m.status==='stopped');if(st.length){L.push('Recently stopped:');st.slice(0,5).forEach(m=>L.push('• '+m.name+' — stopped '+fmt(m.stop)+(m.reason?', '+m.reason:'')))}
  AQ.forEach(([k,l])=>{const a=S.answers[k];if(a.t){L.push('',l.toUpperCase()+(a.u?' (updated '+ago(a.u)+')':''));a.t.split('\n').forEach(x=>x.trim()&&L.push('• '+x.trim()))}});
@@ -148,13 +148,13 @@ function summaryText(){const L=[],P=S.patient;L.push('HEALTH SUMMARY'+(P.name?' 
  const u=upcoming();if(u.length){L.push('','UPCOMING');u.forEach(a=>L.push('• '+fmt(a.date)+' — '+a.specialty+(a.doctor?', '+a.doctor:'')))}
  return L.join('\n')}
 function vMore(){return banners()+`<h2>Summary for a doctor</h2><p class="meta" style="margin-top:-4px">Show this screen at check-in, or copy it into a patient-portal message.</p><div class="card summary">${esc(summaryText())}</div><div class="btns one"><button class="btn p" data-act="copy-summary">Copy summary</button></div>
-<h2>Her details</h2><button class="card tap" data-act="edit-patient"><div class="lbl">${esc(S.patient.name||'Add her name')}</div><div class="meta">${S.patient.born?'Born '+esc(fmt(S.patient.born)):'Add date of birth'}</div></button>
+<h2>Patient details</h2><button class="card tap" data-act="edit-patient"><div class="lbl">${esc(S.patient.name||'Add the patient’s name')}</div><div class="meta">${S.patient.born?'Born '+esc(fmt(S.patient.born)):'Add date of birth'}</div></button>
 <h2>Backup</h2><div class="card"><div class="val" style="margin-top:0">Everything is saved on this phone only. Save a backup every week or two, and keep it in your files, Drive or email.</div><div class="meta" style="margin-top:6px">${storageOK?'Saving on this device: on':'Saving on this device: not available in this browser'} · Last backup: ${S.lastBackup?ago(S.lastBackup):'never'}</div><div class="acts"><button class="btn mini p" data-act="download">Save backup file</button><button class="btn mini" data-act="copy-backup">Copy backup</button><button class="btn mini" data-act="restore">Restore</button></div></div>
-<h2>Put it on the home screen</h2><div class="card"><b>iPhone (Safari):</b><ol class="how"><li>Tap the Share button</li><li>Choose “Add to Home Screen”</li></ol><b>Android (Chrome):</b><ol class="how"><li>Tap the ⋮ menu</li><li>Choose “Add to Home screen”</li></ol><div class="meta">After that, always open it from the home-screen icon. It works without signal, and that’s where her record lives.</div></div>
+<h2>Put it on the home screen</h2><div class="card"><b>iPhone (Safari):</b><ol class="how"><li>Tap the Share button</li><li>Choose “Add to Home Screen”</li></ol><b>Android (Chrome):</b><ol class="how"><li>Tap the ⋮ menu</li><li>Choose “Add to Home screen”</li></ol><div class="meta">After that, always open it from the home-screen icon. It works without signal, and that’s where the record lives.</div></div>
 <div class="btns one" style="margin-top:22px"><button class="btn w" data-act="wipe">Erase everything on this phone</button></div>`}
 const installed=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
 const mobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-function vWelcome(){return`<div class="welcome">${mobile&&!installed()?`<div class="banner" style="display:block">Before you start: add this to your home screen, then open it from the icon. On iPhone, what you enter in Safari doesn’t carry over to the home-screen app.<ol class="how" style="font-weight:500"><li>iPhone: Share button → Add to Home Screen</li><li>Android: ⋮ menu → Add to Home screen</li></ol></div>`:''}<h2 style="font-size:24px">One place for every appointment, medication and result</h2><p>Log each visit in a minute. Keep the answers doctors ask every time up to date, each with the date it was last checked. Hand over a clean summary instead of a verbal history.</p><p>Everything stays on this phone. Nothing is sent anywhere.</p><div class="btns one"><button class="btn p" data-act="fresh">Start my journal</button><button class="btn" data-act="try">Look around with sample data first</button></div></div>`}
+function vWelcome(){return`<div class="welcome">${mobile&&!installed()?`<div class="banner" style="display:block">Before you start: add this to your home screen, then open it from the icon. On iPhone, what you enter in Safari doesn’t carry over to the home-screen app.<ol class="how" style="font-weight:500"><li>iPhone: Share button → Add to Home Screen</li><li>Android: ⋮ menu → Add to Home screen</li></ol></div>`:''}<h2 style="font-size:24px">One place for every appointment, medication and result</h2><p>Log each visit in a minute. Keep the answers doctors ask every time up to date, each with the date it was last checked. Hand over a clean summary instead of a verbal history.</p><p>Everything stays on this phone. Nothing is sent anywhere.</p><div class="btns one"><button class="btn p" data-act="fresh">Start a Care Journal</button><button class="btn" data-act="try">Look around with sample data first</button></div></div>`}
 function render(){head();navR();const v={home:vHome,visits:vVisits,meds:vMeds,appts:vAppts,more:vMore};$('#app').innerHTML=S?v[tab]():vWelcome();
  const qi=$('#q');if(qi)qi.addEventListener('input',e=>{q=e.target.value;$('#vlist').innerHTML=visitList()})}
 function sheet(inner){$('#layer').innerHTML=`<div class="sheet" data-act="close-bg"><div role="dialog" aria-modal="true">${inner}</div></div>`;const f=$('#layer input,#layer textarea');if(f)f.focus()}
@@ -175,7 +175,7 @@ async function copy(text){try{await navigator.clipboard.writeText(text);toast('C
 const backup=()=>JSON.stringify({app:'care-journal',v:1,saved:today(),data:S},null,1);
 const A={
  tab:e=>{tab=e.dataset.k;render();scrollTo(0,0)},close,'close-bg':(e,ev)=>{if(ev.target===e)close()},
- fresh:()=>{if(S&&!S.sample)return;S=blank();save();tab='more';render();form({title:'Who is this journal for?',fields:[{k:'name',l:'Her first name',req:1},{k:'born',l:'Date of birth',t:'date'}],onSave:d=>{S.patient=d;tab='home'}})},
+ fresh:()=>{if(S&&!S.sample)return;S=blank();save();tab='more';render();form({title:'Who is this Care Journal for?',fields:[{k:'name',l:'What is the patient’s name?',req:1},{k:'born',l:'Date of birth',t:'date'}],onSave:d=>{S.patient=d;tab='home'}})},
  try:()=>{S=sample();save();tab='home';render()},
  'edit-answer':e=>{const k=e.dataset.k,a=S.answers[k];form({title:AQ.find(x=>x[0]===k)[1],hint:'One item per line. Saving stamps today’s date, so doctors know it’s current.',fields:[{k:'t',l:'Details',t:'area'}],values:{t:a.t},onSave:d=>{a.t=d.t;a.u=today()}})},
  'add-visit':()=>visitForm(null),'edit-visit':e=>visitForm(S.visits.find(x=>x.id===e.dataset.id)),
@@ -185,17 +185,17 @@ const A={
  'stop-med':e=>{const m=S.meds.find(x=>x.id===e.dataset.id);form({title:'Stop '+esc(m.name),hint:'It moves to “Stopped” so the history stays.',fields:[{k:'stop',l:'Stopped on',t:'date',req:1},{k:'reason',l:'Why / who said so',ph:'e.g. Neurology asked to stop'}],values:{stop:today()},onSave:d=>{m.status='stopped';m.stop=d.stop;m.reason=d.reason}})},
  'add-appt':()=>form({title:'Add an appointment',fields:AF,onSave:d=>S.appts.push({id:uid(),...d})}),
  'edit-appt':e=>{const a=S.appts.find(x=>x.id===e.dataset.id);form({title:'Edit appointment',fields:AF,values:a,onSave:d=>Object.assign(a,d),onDelete:()=>{S.appts=S.appts.filter(x=>x.id!==a.id)}})},
- 'edit-patient':()=>form({title:'Her details',fields:[{k:'name',l:'First name',req:1},{k:'born',l:'Date of birth',t:'date'}],values:S.patient,onSave:d=>{S.patient=d}}),
+ 'edit-patient':()=>form({title:'Patient details',fields:[{k:'name',l:'Patient’s name',req:1},{k:'born',l:'Date of birth',t:'date'}],values:S.patient,onSave:d=>{S.patient=d}}),
  'copy-summary':()=>copy(summaryText()),'copy-backup':()=>copy(backup()),
- download:async()=>{const name='care-journal-backup-'+today()+'.json',blob=new Blob([backup()],{type:'application/json'});
-  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})&&/iPhone|iPad|Android/i.test(navigator.userAgent)){await navigator.share({files:[f],title:'Care Journal backup'});markBackup();toast('Backup ready');return}}catch(e){if(e&&e.name==='AbortError')return}
+ download:async()=>{const name='health-vault-backup-'+today()+'.json',blob=new Blob([backup()],{type:'application/json'});
+  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})&&/iPhone|iPad|Android/i.test(navigator.userAgent)){await navigator.share({files:[f],title:'Health Vault backup'});markBackup();toast('Backup ready');return}}catch(e){if(e&&e.name==='AbortError')return}
   try{const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);markBackup();toast('Backup saved')}catch(e){copy(backup())}},
  restore:()=>$('#restore').click(),
- wipe:()=>confirmBox('Erase her whole journal from this phone? Save a backup first if you might need it.',()=>{try{localStorage.removeItem(K)}catch(e){}S=null;tab='home';render()})
+ wipe:()=>confirmBox('Erase this whole Care Journal from this phone? Save a backup first if you might need it.',()=>{try{localStorage.removeItem(K)}catch(e){}S=null;tab='home';render()})
 };
 document.addEventListener('click',ev=>{const e=ev.target.closest('[data-act]');if(!e)return;const f=A[e.dataset.act];if(f){if(e.tagName==='BUTTON'&&e.type!=='submit')ev.preventDefault();f(e,ev)}});
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&$('#layer').innerHTML)close()});
-$('#restore').addEventListener('change',ev=>{const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;if(!Array.isArray(d.visits)||!d.answers)throw 0;confirmBox('Replace what’s on this phone with the backup from '+(j.saved?fmt(j.saved):'that file')+'?',()=>{S=d;save();tab='home';render();toast('Restored')})}catch(e){toast('That file isn’t a Care Journal backup')}ev.target.value=''};r.readAsText(file)});
+$('#restore').addEventListener('change',ev=>{const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;if(!Array.isArray(d.visits)||!d.answers)throw 0;confirmBox('Replace what’s on this phone with the backup from '+(j.saved?fmt(j.saved):'that file')+'?',()=>{S=d;save();tab='home';render();toast('Restored')})}catch(e){toast('That file isn’t a Health Vault backup')}ev.target.value=''};r.readAsText(file)});
 if(S&&S.sample){/* keep sample dates feeling current */}
 render();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
